@@ -131,7 +131,7 @@
             button.disabled = true;
             responseDiv.innerHTML = '';
 
-            fetch('http://127.0.0.1:5000/jokes', {  // Replace with your API endpoint
+            fetch('http://127.0.0.1:8000/jokes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestData)
