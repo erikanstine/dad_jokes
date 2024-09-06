@@ -6,58 +6,95 @@
     <title>Dad Jokes Service</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #f0f2f5;
         }
         .container {
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             background-color: #fff;
+            text-align: center;
         }
         h1 {
-            text-align: center;
+            font-size: 28px;
+            color: #333;
             margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .form-group {
             margin-bottom: 15px;
+            text-align: left;
         }
         .form-group label {
             display: block;
+            font-size: 14px;
+            color: #666;
             margin-bottom: 5px;
         }
         .form-group input {
             width: 100%;
             padding: 10px;
+            font-size: 16px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            border-color: #007bff;
+            outline: none;
         }
         .form-group button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             background-color: #007bff;
             color: white;
             font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
         .form-group button:hover {
             background-color: #0056b3;
+        }
+        .form-group button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        #response p {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #loading {
+            display: none;
+            margin-top: 20px;
+        }
+        #loading img {
+            width: 50px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Get Your Dad Jokes!</h1>
+        <h1>Dad Jokes GPT!</h1>
         <form id="jokeForm">
             <div class="form-group">
                 <label for="subject">Subject:</label>
@@ -71,35 +108,53 @@
                 <button type="button" onclick="submitForm()">Get Jokes</button>
             </div>
         </form>
+
+        <div id="loading">
+            <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading...">
+        </div>
+
+        <div id="response"></div>
     </div>
 
     <script>
         function submitForm() {
             const subject = document.getElementById('subject').value;
             const quantity = document.getElementById('quantity').value;
+            const requestData = { subject, quantity };
 
-            const requestData = {
-                subject: subject,
-                quantity: quantity
-            };
+            const button = document.querySelector('button');
+            const loading = document.getElementById('loading');
+            const responseDiv = document.getElementById('response');
+
+            // Show loading animation
+            loading.style.display = 'block';
+            button.disabled = true;
+            responseDiv.innerHTML = '';
 
             fetch('http://127.0.0.1:5000/jokes', {  // Replace with your API endpoint
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestData)
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                // Handle the response data (e.g., display jokes on the page)
+                loading.style.display = 'none';
+                button.disabled = false;
+
+                if (Array.isArray(data.jokes)) {
+                    responseDiv.innerHTML = data.jokes.map(joke => `<p>${joke}</p>`).join('');
+                } else {
+                    responseDiv.innerHTML = `<p>${data.message}</p>`;
+                }
             })
-            .catch((error) => {
+            .catch(error => {
+                loading.style.display = 'none';
+                button.disabled = false;
+
+                responseDiv.innerHTML = '<p>Sorry, there was an error fetching the jokes.</p>';
                 console.error('Error:', error);
             });
         }
     </script>
 </body>
 </html>
-
