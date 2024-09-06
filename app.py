@@ -19,6 +19,7 @@ class JokesResponse(BaseModel):
 
 
 def send_oai_query(subject, qty):
+    # TODO - Use 3.5 Turbo for better jokes, cheaper usage.
     if qty > 5:
         qty = 5
     elif qty < 1:
