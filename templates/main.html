@@ -95,7 +95,7 @@
 <body>
     <div class="container">
         <h1>Dad Jokes GPT!</h1>
-        <form id="jokeForm">
+        <form id="jokeForm" onsubmit="submitForm(); return false;">
             <div class="form-group">
                 <label for="subject">Subject:</label>
                 <input type="text" id="subject" name="subject" placeholder="Enter joke subject" required>
@@ -107,6 +107,7 @@
             <div class="form-group">
                 <button type="button" onclick="submitForm()">Get Jokes</button>
             </div>
+            <input type="submit" style="display: none" />
         </form>
 
         <div id="loading">
